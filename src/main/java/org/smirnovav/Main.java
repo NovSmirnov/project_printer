@@ -9,7 +9,9 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
         String rootDir = "D:\\Files\\JavaProjects\\moex_api_lib";
-        List<Path> paths = IOUtils.listRelativePaths(rootDir);
+//        List<Path> paths = IOUtils.listRelativePaths(rootDir);
+        List<Path> paths = IOUtils.getOnlyFiles(rootDir);
+//        List<Path> paths = IOUtils.getOnlyDirectories(rootDir);
         for (Path path : paths) {
             System.out.println(path);
         }

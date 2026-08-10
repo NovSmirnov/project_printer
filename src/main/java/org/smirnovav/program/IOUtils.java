@@ -31,7 +31,7 @@ public class IOUtils {
         return builder.toString();
     }
 
-    public static List<Path> listRelativePaths(String rootPathStr) throws IOException {
+    public static List<Path> listRelativePaths(String rootPathStr) {
         Path rootPath = Paths.get(rootPathStr).toAbsolutePath().normalize();
 
         if (!Files.isDirectory(rootPath)) {
@@ -47,10 +47,35 @@ public class IOUtils {
                 Path relative = rootPath.relativize(path);
                 result.add(relative);
             });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return result;
     }
+
+    public static List<Path> getOnlyDirectories(String rootPathStr) {
+        List<Path> result = new ArrayList<>();
+        for (Path path : listRelativePaths(rootPathStr)) {
+            Path absPath = Paths.get(rootPathStr + "\\" + path.toString());
+            if (Files.isDirectory(absPath)) {
+                result.add(path);
+            }
+        }
+        return result;
+    }
+
+    public static List<Path> getOnlyFiles(String rootPathStr) {
+        List<Path> result = new ArrayList<>();
+        for (Path path : listRelativePaths(rootPathStr)) {
+            Path absPath = Paths.get(rootPathStr + "\\" + path.toString());
+            if (Files.isRegularFile(absPath)) {
+                result.add(path);
+            }
+        }
+        return result;
+    }
+
 
 
 }
