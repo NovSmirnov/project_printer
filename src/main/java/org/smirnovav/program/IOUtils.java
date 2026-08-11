@@ -3,12 +3,12 @@ package org.smirnovav.program;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class IOUtils {
@@ -23,12 +23,19 @@ public class IOUtils {
             e.printStackTrace();
         }
         StringBuilder builder = new StringBuilder();
-        builder.append("___").append("\n");
-        builder.append(filePath).append("\n").append("\n");
         for (String line : lines) {
             builder.append(line).append("\n");
         }
         return builder.toString();
+    }
+
+    public static void writeFile(String content, String filePath) {
+        Path path = Paths.get(filePath);
+        try {
+            Files.writeString(path, content, Charset.forName("windows-1251"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static List<Path> listRelativePaths(String rootPathStr) {
@@ -74,6 +81,35 @@ public class IOUtils {
             }
         }
         return result;
+    }
+
+    public static String createData(String rootPathStr) {
+        List<Path> directories = getOnlyDirectories(rootPathStr);
+        List<Path> files = getOnlyFiles(rootPathStr);
+        StringBuilder dirBuilder = new StringBuilder();
+        StringBuilder dataBuilder = new StringBuilder();
+        for (Path dirPath : directories) {
+            dirBuilder.append(dirPath.toString()).append("\n");
+        }
+        dirBuilder.append("+++").append("\n");
+        for (Path filePath : files) {
+            dataBuilder.append(filePath.toString()).append("\n");
+            dataBuilder.append("???").append("\n");
+            String simpleFileStr = readSingleFile(rootPathStr + "\\" + filePath.toString());
+            dataBuilder.append(simpleFileStr).append("---").append("\n");
+        }
+        StringBuilder resultBuilder = new StringBuilder();
+        resultBuilder.append(dirBuilder).append(dataBuilder);
+        return resultBuilder.toString();
+    }
+
+    public static String addSymbols(String content, char symbol) {
+        List<String> lines = content.lines().toList();
+        StringBuilder builder = new StringBuilder();
+        for (String line : lines) {
+            builder.append(symbol).append(line).append("\n");
+        }
+        return builder.toString();
     }
 
 
