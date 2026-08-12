@@ -113,5 +113,29 @@ public class IOUtils {
     }
 
 
+    public static String oneLineCipher(String line, int shift) {
+        if (line == null || line.isEmpty()) {
+            return line;
+        }
+        shift = ((shift % 256) + 256) % 256;
+        StringBuilder result = new StringBuilder();
+
+        for (char c : line.toCharArray()) {
+            char shifted = (char) ((shift + c) % 0x10000);
+            result.append(shifted);
+        }
+        return result.toString();
+    }
+
+    public static String dataCipher(String content, int shift) {
+        List<String> lines = content.lines().toList();
+        StringBuilder builder = new StringBuilder();
+        for (String line : lines) {
+            builder.append(oneLineCipher(line, shift)).append("\n");
+        }
+        return builder.toString();
+    }
+
+
 
 }
