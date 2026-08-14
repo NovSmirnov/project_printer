@@ -136,6 +136,57 @@ public class IOUtils {
         return builder.toString();
     }
 
+    public static String oneLineDecipher(String line, int shift) {
+        if (line == null || line.isEmpty()) {
+            return line;
+        }
+
+        shift = ((shift % 256) + 256) % 256;
+        StringBuilder result = new StringBuilder(line.length());
+        for (char c : line.toCharArray()) {
+            int code = c - shift;
+            if (code < 0) {
+                code += 0x10000;
+            }
+            char deciphered = (char) code;
+            result.append(deciphered);
+        }
+        return result.toString();
+    }
+
+    public static String dataDecipher(String content, int shift) {
+        List<String> lines = content.lines().toList();
+        StringBuilder builder = new StringBuilder();
+        for (String line : lines) {
+            builder.append(oneLineDecipher(line, shift)).append("\n");
+        }
+        return builder.toString();
+    }
+
+    public static void createFolderStructure(String rootPath, List<String> relativePaths) {
+        Path root = Paths.get(rootPath).toAbsolutePath();
+
+        try {
+            Files.createDirectories(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (String relativePath : relativePaths) {
+            if (relativePath == null || relativePath.isBlank()) {
+                continue;
+            }
+
+            Path fullPath = root.resolve(relativePath).normalize();
+
+            try {
+                Files.createDirectories(fullPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 
 }
