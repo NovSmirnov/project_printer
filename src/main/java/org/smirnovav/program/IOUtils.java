@@ -112,6 +112,15 @@ public class IOUtils {
         return builder.toString();
     }
 
+    public static String deleteSymbols(String content, char symbol) {
+        List<String> lines = content.lines().toList();
+        StringBuilder builder = new StringBuilder();
+        for (String line : lines) {
+            String newLine = line.substring(1);
+            builder.append(newLine).append("\n");
+        }
+        return builder.toString();
+    }
 
     public static String oneLineCipher(String line, int shift) {
         if (line == null || line.isEmpty()) {
@@ -184,6 +193,28 @@ public class IOUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static List<String> getDirectoriesPaths(String content) {
+        String[] pathsStr = content.split("\\+\\+\\+", 2);
+        return pathsStr[0].lines().toList();
+    }
+
+    public static List<ProjectFile> getProjectFiles(String content) {
+        String[] splitedFile = content.split("\\\\+", 2);
+        String[] filesStr = splitedFile[1].split("---");
+        List<ProjectFile> projectFiles = new ArrayList<>();
+        for (int i = 0; i < filesStr.length - 1; i++) {
+            String[] fileData = filesStr[i].split("\\|\\|");
+            projectFiles.add(new ProjectFile(fileData[0].replace("\\n", ""), fileData[1]));
+        }
+        return projectFiles;
+    }
+
+    public static void writeProjectFiles(String rootPath, List<ProjectFile> files) {
+        for (ProjectFile file : files) {
+            writeFile(file.getContent(), rootPath + "\\" + file.getFilePath());
         }
     }
 
