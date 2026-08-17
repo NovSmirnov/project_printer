@@ -29,6 +29,20 @@ public class IOUtils {
         return builder.toString();
     }
 
+    public static String readOneFileContent(String filePath) {
+        List<String> lines = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(Paths.get(filePath), Charset.forName("windows-1251"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String line : lines) {
+            builder.append(line).append("\n");
+        }
+        return builder.toString();
+    }
+
     public static void writeFile(String content, String filePath) {
         Path path = Paths.get(filePath);
         try {
@@ -96,7 +110,7 @@ public class IOUtils {
             dataBuilder.append(filePath.toString()).append("\n");
             dataBuilder.append("???").append("\n");
             String simpleFileStr = readSingleFile(rootPathStr + "\\" + filePath.toString());
-            dataBuilder.append(simpleFileStr).append("---").append("\n");
+            dataBuilder.append(simpleFileStr).append("__________________________________________________").append("\n");
         }
         StringBuilder resultBuilder = new StringBuilder();
         resultBuilder.append(dirBuilder).append(dataBuilder);
@@ -202,12 +216,12 @@ public class IOUtils {
     }
 
     public static List<ProjectFile> getProjectFiles(String content) {
-        String[] splitedFile = content.split("\\\\+", 2);
-        String[] filesStr = splitedFile[1].split("---");
+        String[] splitedFile = content.split("\\+\\+\\+", 2);
+        String[] filesStr = splitedFile[1].split("__________________________________________________");
         List<ProjectFile> projectFiles = new ArrayList<>();
         for (int i = 0; i < filesStr.length - 1; i++) {
-            String[] fileData = filesStr[i].split("\\|\\|");
-            projectFiles.add(new ProjectFile(fileData[0].replace("\\n", ""), fileData[1]));
+            String[] fileData = filesStr[i].split("\\?\\?\\?");
+            projectFiles.add(new ProjectFile(fileData[0].replace("\n", ""), fileData[1]));
         }
         return projectFiles;
     }
